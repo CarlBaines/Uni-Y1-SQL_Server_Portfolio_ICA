@@ -239,3 +239,58 @@ FETCH NEXT 10 ROWS ONLY;
 --If the team_fifa_api_id is null, the string 'No FIFA API ID' is replaced in place of the null value.
 SELECT ISNULL(CAST(TRY_CAST(team_fifa_api_id AS INT) AS VARCHAR(255)), 'No FIFA API ID') AS fifa_api_id, team_long_name, team_short_name
 FROM team;
+
+--Demo C4 Query Two
+--Module 5: How to work with unknown values
+--Description: Returns a list of player names with missing overall ratings.
+SELECT p.player_name, pa.overall_rating
+FROM player AS p
+JOIN player_attributes AS pa
+ON p.player_api_id = pa.player_api_id
+WHERE pa.overall_rating IS NULL;
+
+--Demo D1 Query One
+--Module 6: Working with data types examples
+--Description: This query demonstrates working with data types by casting numeric and text fields using CAST and handling null values with ISNULL.
+--The query selects distinct player names and their overall ratings, ordered in ascending order. If a rating is null, it displays 'N/A'.
+SELECT DISTINCT 
+	   CAST(p.player_name AS VARCHAR) AS player_name,
+	   ISNULL(CAST(pa.overall_rating AS VARCHAR), 'N/A') + ' OVR' AS Overall_Rating
+FROM player_attributes pa
+JOIN player p ON pa.player_api_id = p.player_api_id
+ORDER BY Overall_Rating ASC;
+
+--Demo D1 Query Two
+--Module 6: Working with data types examples
+--Description: This query demonstrates working with data types as it selects all columns in the database, ordered by table_name 
+--and displays the data type and max character length of each.
+SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH
+FROM INFORMATION_SCHEMA.COLUMNS
+ORDER BY TABLE_NAME;
+
+--Demo D2 Query One
+--Module 6: Working with Character Data
+--Original query I wanted to concatenate.
+SELECT DISTINCT 
+	CAST(p.player_name AS varchar(MAX)) AS player_name,
+	MAX(pa.overall_rating) AS overall_rating
+FROM player AS p
+JOIN player_attributes AS pa
+	ON p.player_api_id = pa.player_api_id
+GROUP BY CAST(p.player_name AS varchar(MAX));
+
+--Description: This query returns a list of unique players from the player table alongside their highest overall rating
+--from the player_attributes table, formatted as a single string.
+SELECT DISTINCT
+	CONCAT(
+		CAST(p.player_name AS varchar(MAX)),
+		N' (overall_rating: ', 
+		CAST(MAX(pa.overall_rating) AS NVARCHAR),
+		N')'
+	) AS playerWithRating
+FROM player AS p
+JOIN player_attributes AS pa
+	ON p.player_api_id = pa.player_api_id
+GROUP BY CAST(p.player_name AS varchar(MAX));
+
+
