@@ -293,4 +293,23 @@ JOIN player_attributes AS pa
 	ON p.player_api_id = pa.player_api_id
 GROUP BY CAST(p.player_name AS varchar(MAX));
 
+--Demo D2 Query Two
+--Module 6: Working with Character Data
+--Original Query I wanted to concatenate.
+SELECT team_long_name, team_short_name
+FROM team;
+
+--Description: This query returns a list of team short and long names, formatted as a single string.
+SELECT
+	CONCAT(
+		team_long_name,
+		N' (short_name: ',
+		team_short_name,
+		N')'
+	) AS teamShortAndLongNames
+FROM team;
+
+--Demo D3 Query One
+--Module 6: Working with Date and Time Data
+--Description:
 
