@@ -16,7 +16,7 @@ SELECT * FROM team_attributes;
 --Explanation: Replace the TABLE_NAME string with the table that is needed for check.
 SELECT COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH
 FROM INFORMATION_SCHEMA.COLUMNS
-WHERE TABLE_NAME = 'match';
+WHERE TABLE_NAME = 'player';
 
 --Demo A1 Query One
 --Module 3: Writing SELECT queries with single table.
@@ -311,5 +311,50 @@ FROM team;
 
 --Demo D3 Query One
 --Module 6: Working with Date and Time Data
---Description:
+--Description: This query returns the difference between the first match date and the last match date stored in the match table.
+SELECT DATEDIFF(
+	DAY,
+	(SELECT TOP 1 CAST(mdate AS varchar(MAX)) AS mdate FROM match ORDER BY mdate ASC),
+	(SELECT TOP 1 CAST(mdate AS varchar(MAX)) AS mdate FROM match ORDER BY mdate DESC)
+) AS daysBetween
 
+--Demo D3 Query Two
+--Module 6: Working with Date and Time Data
+--Description: This query returns all player names and their birthdays from the player table along with their age. The query results are ordered by the oldest birthday.
+--The age is calculated from the birthday datetime values by using the DATEDIFF function.
+--The birthday column is converted from a text type and is first casted to a varchar, so that it can then be casted to a date type, since SQL server
+--does not allow for text types to be converted straight to a date/datetime type.
+SELECT player_name, 
+	CAST(CAST(birthday AS varchar(MAX)) AS DATE) AS birthday,
+	DATEDIFF(YEAR, CAST(CAST(birthday AS varchar(MAX)) AS DATE), '2025-04-16') as Age
+FROM player
+ORDER BY birthday;
+
+--Demo D4 Query One
+--Module 7: Adding data to tables using DML.
+--Description: Add the country San Marino to the countries table with a designated ID.
+INSERT INTO country (id, name)
+VALUES('26518','San Marino');
+
+DELETE FROM country WHERE CONVERT(VARCHAR, name) = 'San Marino';
+--Using the * wildcard to return all rows and values from the country table.
+SELECT * FROM country;
+
+--Demo D4 Query Two
+--Module 7: Adding data to tables using DML.
+--Description: Adding the second tier leagues of each country into the league table.
+INSERT INTO league(id, country_id, name)
+VALUES
+('101','1','Challanger Pro League'),
+('102','1729','EFL Championship'),
+('103','4769','Ligue 2'),
+('104','7809','Bundesliga 2'),
+('105','10257','Serie B'),
+('106','13274','Eerste Divisie'),
+('107','15722','Betclic l liga'),
+('108','17642','Liga Portugal 2'),
+('109','19694','Scottish Championship'),
+('110','21518','La Liga 2'),
+('111','24558','Swiss Challenge League');
+
+SELECT * FROM league;
