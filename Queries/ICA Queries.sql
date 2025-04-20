@@ -358,3 +358,46 @@ VALUES
 ('111','24558','Swiss Challenge League');
 
 SELECT * FROM league;
+
+--Demo E1 Query One
+--Module 7: Modifying and Removing Data
+--The query which returns a result I want to update.
+--It selects the best player based on highest overall_rating, returning the name, api id, overall_rating, with their dribbling and ball control statistics.
+SELECT DISTINCT TOP 1 CAST(p.player_name AS nvarchar(MAX)) AS player_name, p.player_api_id, pa.overall_rating AS overall_rating
+FROM player AS p
+JOIN player_attributes AS pa
+ON p.player_api_id = pa.player_api_id
+GROUP BY CAST(p.player_name AS nvarchar(MAX)), p.player_api_id, pa.overall_rating
+ORDER BY overall_rating DESC
+
+--Description: This is the query I used to update the ball control statistic of the best player (Lionel Messi), based on highest overall_rating.
+--It finds Messi and increases his ball_control stat by 3.
+WITH TopPlayer AS (
+    SELECT TOP 1 pa.player_api_id AS player_attribute_id
+    FROM player AS p
+    JOIN player_attributes AS pa ON p.player_api_id = pa.player_api_id
+    ORDER BY pa.overall_rating DESC
+)
+UPDATE player_attributes
+SET overall_rating = overall_rating + 2
+WHERE id IN (SELECT player_attribute_id FROM TopPlayer);
+
+--Demo E1 Query Two
+--Module 7: Modifying and Removing Data
+--The query which returns a result I want to update.
+SELECT TOP 10 * FROM team
+ORDER BY team_api_id
+
+--Description: Deletes the team 'Ruch Chorzów' from the team table.
+DELETE FROM team WHERE CAST(team_long_name AS varchar(MAX)) = 'Ruch Chorzów';
+
+
+
+
+
+
+
+
+
+
+
