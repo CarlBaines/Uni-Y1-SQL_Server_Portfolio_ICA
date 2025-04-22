@@ -412,5 +412,40 @@ ADD home_team_goal_difference AS (home_team_goal - away_team_goal),
 SELECT home_team_goal, away_team_goal, home_team_goal_difference, away_team_goal_difference
 FROM match;
 
+--Demo E3 Query One
+--Module 8: Writing Queries with Built-In Functions
+--Description: The query calculates the total number of matches each team has played, regardless of whether they are home or away.
+--It uses the count built-in function.
+WITH teams AS (
+    SELECT DISTINCT t.team_api_id, CAST(t.team_long_name AS varchar(MAX)) AS team_long_name
+    FROM team AS t
+    JOIN match AS m
+    ON t.team_api_id = m.home_team_api_id OR t.team_api_id = m.away_team_api_id
+)
+SELECT 
+    t.team_long_name,
+    COUNT(m.match_api_id) AS total_matches
+FROM teams AS t
+JOIN match AS m
+	ON t.team_api_id = m.home_team_api_id OR t.team_api_id = m.away_team_api_id
+GROUP BY t.team_long_name
+ORDER BY total_matches DESC;
+
+--Demo E3 Query Two
+--Module 8: Writing Queries with Built-In Functions
+--Description: This query selects the player with the highest average overall and potential ratings, using the built-in AVG function.
+SELECT TOP 1 CAST(p.player_name AS nvarchar(MAX)) AS player_name, p.player_api_id, AVG(pa.overall_rating) AS average_overall_rating, AVG(pa.potential) AS average_potential_rating
+FROM player AS p
+JOIN player_attributes AS pa
+ON p.player_api_id = pa.player_api_id
+GROUP BY CAST(p.player_name AS nvarchar(MAX)), p.player_api_id
+ORDER BY average_overall_rating DESC
+
+
+
+
+
+
+
 
 
