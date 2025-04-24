@@ -441,11 +441,31 @@ ON p.player_api_id = pa.player_api_id
 GROUP BY CAST(p.player_name AS nvarchar(MAX)), p.player_api_id
 ORDER BY average_overall_rating DESC
 
+--Demo E4 Query One
+--Module 8: Using Conversion Functions
+--Description: Counts the total matches played per year in the match table.
+--The query extracts just the year part of the mdate and the count function is used to count all the number of matches for each year.
+--The result is grouped and ordered by the myear.
+SELECT YEAR(CAST(CAST(mdate AS varchar(MAX)) AS datetime)) AS myear, COUNT(*) AS total_matches
+FROM match
+GROUP BY YEAR(CAST(CAST(mdate AS varchar(MAX)) AS datetime))
+ORDER BY myear;
 
-
-
-
-
+--Demo E4 Query Two
+--Module 8: Using Conversion Functions
+--Description: This query selects distinct player names and their overall ratings by joining onto the player_attributes table.
+--It uses a case statement to classify the players into rating tiers based on their overall ratings.
+--The query uses a conversion function as it converts the data type of the player name from text to varchar, so that it can be selected as distinct.
+SELECT DISTINCT CAST(p.player_name AS varchar(MAX)) AS player_name, pa.overall_rating,
+	CASE
+		WHEN pa.overall_rating >= 90 THEN 'Goats (OVR 90+'
+		WHEN pa.overall_rating >= 85 THEN 'Professionals (OVR 85-89)'
+		WHEN pa.overall_rating >= 75 THEN 'Rising Stars (OVR 75-84)'
+		WHEN pa.overall_rating >= 65 THEN 'Average (OVR 65-74)'
+		ELSE 'Flops (OVR UNDER 65)'
+	END AS player_rating
+FROM player AS p
+JOIN player_attributes AS pa ON p.player_api_id = pa.player_api_id;
 
 
 
