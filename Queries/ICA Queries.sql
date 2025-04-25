@@ -467,5 +467,24 @@ SELECT DISTINCT CAST(p.player_name AS varchar(MAX)) AS player_name, pa.overall_r
 FROM player AS p
 JOIN player_attributes AS pa ON p.player_api_id = pa.player_api_id;
 
+--Demo F1 Query One
+--Module 8: Using Logical Functions
+--Description: The query selects a list of matches from the match table displaying the ids of the home and away teams,
+--the matchIds; creates a result row based on the final score using IIF() logic.
+SELECT home_team_api_id, away_team_api_id, id AS match_id,
+	IIF(home_team_goal > away_team_goal, 'Home Team Won',
+		IIF(home_team_goal < away_team_goal, 'Away Team Won', 'Draw')
+	) AS Result
+FROM match;
 
-
+--Demo F1 Query Two
+--Module 8: Using Logical Functions
+--Description: The query selects the player names from the player table and splits them into first and last names using string functions.
+SELECT SUBSTRING(CAST(player_name AS varchar(MAX)), 1, CHARINDEX(' ', CAST(player_name AS varchar(MAX))) - 1) AS first_name,
+	SUBSTRING(
+		CAST(player_name AS varchar(MAX)),
+		CHARINDEX(' ', CAST(player_name AS varchar(MAX))) + 1,
+		LEN(CAST(player_name AS varchar(MAX))) - CHARINDEX(' ', CAST(player_name AS varchar(MAX)))
+	) AS last_name
+FROM player
+WHERE CHARINDEX(' ', CAST(player_name AS varchar(MAX))) > 0;
