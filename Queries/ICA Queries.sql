@@ -488,3 +488,36 @@ SELECT SUBSTRING(CAST(player_name AS varchar(MAX)), 1, CHARINDEX(' ', CAST(playe
 	) AS last_name
 FROM player
 WHERE CHARINDEX(' ', CAST(player_name AS varchar(MAX))) > 0;
+
+--Demo F2 Query One
+--Module 8: Using Functions to work with NULL.
+--Description: The query selects distinct player names with a rating value.
+--The rating value is assigned by using the COALESCE function. It works with nulls by checking if overall_rating or if both overall_rating and potential are null.
+--If overall_rating is NULL, it falls back to the potential rating, and if both are NULL, it defaults to 0.
+--The results are ordered by the rating.
+SELECT DISTINCT 
+	CAST(p.player_name AS varchar(MAX)) AS player_name, 
+	COALESCE(pa.overall_rating, pa.potential, 0) AS rating
+FROM player AS p
+JOIN player_attributes AS pa
+ON p.player_api_id = pa.player_api_id
+ORDER BY rating;
+
+--Demo F2 Query Two
+--Module 8: Using Functions to work with NULL.
+--Description: The query selects distinct player names and their overall ratings by joining the player table with the player_attributes table, based on api id.
+--The query also labels each player based on whether they have an assigned rating or whether it is null.
+--To do this, it makes use of a case statement inside the select statement which creates an 'isRating' column.
+--It checks if the overall rating of a player is null and assigns an 'unrated' label to be outputted. Else, a 'rated' label is outputted.
+--The result query is ordered by overall rating.
+SELECT DISTINCT 
+	CAST(p.player_name AS varchar(MAX)) AS player_name,
+	pa.overall_rating,
+	CASE
+		WHEN overall_rating IS NULL THEN 'Unrated'
+		ELSE 'Rated'
+	END AS isRating
+FROM player AS p
+JOIN player_attributes AS pa
+ON p.player_api_id = pa.player_api_id
+ORDER BY overall_rating;
