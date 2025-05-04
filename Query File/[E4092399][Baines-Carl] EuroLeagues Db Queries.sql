@@ -36,10 +36,14 @@ FROM match;
 --Explanation: This query uses a subquery and casts the season as a varchar type (it was initially stored as a text value), so that it can work directly with functions like LEFT().
 --It extracts the starting years of the seasons (the first four characters), casts them to an int and orders them.
 SELECT season
+--Selects season from the result of the subquery
 FROM(
+	--Selects distinct seasons from the match table.
 	SELECT DISTINCT CAST(season AS VARCHAR(MAX)) AS season
 	FROM match
 ) AS season
+--Orders the result set by the starting year of the seasons.
+--The LEFT() function extracts the first four characters from the season string.
 ORDER BY CAST(LEFT(season, 4) AS INT);
 
 --Demo A2 Query Two
@@ -67,7 +71,10 @@ WHERE CAST(team_long_name AS VARCHAR(MAX)) = 'Middlesbrough';
 --The name of the countries is casted as a varchar so that it can work directly with functions.
 SELECT CAST(name AS VARCHAR(MAX)) AS country_names,
 	CASE
+		--If the country name is in the when clause, the 'Top 5 League' string is written to the league_tier column,
+		--for the associated country name.
 		WHEN CAST(name AS VARCHAR(MAX)) IN ('England', 'Spain', 'France', 'Germany', 'Italy') THEN 'Top 5 League'
+		--Else, the 'Not in Top 5' string is written to the league_tier column for the associated country name.
 		ELSE 'Not in Top 5'
 	END AS League_Tier
 FROM country;
@@ -109,6 +116,8 @@ SELECT p.player_api_id, CAST(p.player_name AS varchar(MAX)) AS player_name, pa.o
 FROM player AS p
 JOIN player_attributes AS pa
 ON p.player_api_id = pa.player_api_id
+--The overall rating from the player_attributes table must be equal to the result of the subquery.
+--The subquery selects the max overall rating from the player_attributes table.
 WHERE pa.overall_rating = (SELECT MAX(pa.overall_rating) FROM player_attributes AS pa)
 ORDER BY p.player_api_id
 
@@ -126,6 +135,7 @@ ORDER BY team_api_id;
 --Description: full outer join between team and team_attributes to retrieve a distinct list of all teams, including those with or without associated attribute data.
 SELECT DISTINCT t.team_fifa_api_id, CAST(t.team_long_name AS varchar(MAX)) AS team_long_name, CAST(t.team_short_name AS varchar(MAX)) AS team_short_name
 FROM team AS t
+--Returns all records when there is a match in both the team and team_attributes table.
 FULL OUTER JOIN team_attributes AS ta
 ON t.team_fifa_api_id = ta.team_fifa_api_id;
 
